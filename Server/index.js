@@ -18,6 +18,10 @@ app.post("/api/data", (req, res) => {
   });
 });
 
+app.get("/", (req, res) => {
+  res.json({ msg: "hey from server" });
+});
+
 app.get("/api/data", (req, res) => {
   return res.json(data);
 });

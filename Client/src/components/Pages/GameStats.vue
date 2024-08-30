@@ -37,9 +37,15 @@ export default {
   },
 
   mounted() {
-    axios.get("http://localhost:8000/api/data").then((response) => {
-      this.formatPosts(response.data);
-    });
+    const apiUrl = process.env.VUE_APP_API_URL || "http://localhost:8000"; // Using environment variable for API URL
+    axios
+      .get(`${apiUrl}/api/data`)
+      .then((response) => {
+        this.formatPosts(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+      });
   },
   methods: {
     formatPosts(data) {

@@ -1,0 +1,19 @@
+{
+  "name": "assignment",
+  "version": "1.0.0",
+  "description": "Game Application",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "concurrently \"npm run start:Client\" \"npm run start:Server\"",
+    "start:Client": "npm --prefix ./Client/ run dev",
+    "start:Server": "npm --prefix ./Server/ start",
+    "postinstall": "concurrently \"npm run install:Client\" \"npm run install:Server\"",
+    "install:Client": "cd Client && npm i",
+    "install:Server": "cd Server && npm i"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "concurrently": "^8.0.1"
+  }
+}
