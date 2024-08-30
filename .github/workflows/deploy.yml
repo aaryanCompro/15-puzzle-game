@@ -1,0 +1,58 @@
+name: Deploy to AWS
+
+on:
+  push:
+    branches:
+      - main  # Triggers on pushes to the main branch
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest  # Uses the latest Ubuntu runner
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3  # Checks out the repository's code
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'  # Sets up Node.js version 18
+
+    - name: Install dependencies and build frontend
+      run: |
+        cd Client
+        npm install  # Installs dependencies for the Vue.js frontend
+        npm run build  # Builds the Vue.js frontend
+
+    - name: Deploy to S3
+      run: |
+        aws s3 sync ./Client/dist s3://aaryan-game-frontend --delete  # Syncs the built frontend to S3
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_REGION: your-region  # Uses the AWS credentials and region from secrets
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2  # Sets up Docker Buildx for multi-platform builds
+
+    - name: Log in to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v2  # Logs into Amazon ECR
+
+    - name: Build and Push Docker image
+      run: |
+        docker build -t aaryan-dev-server:latest .  # Builds the Docker image
+        docker tag aaryan-dev-server:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.your-region.amazonaws.com/aaryan-dev-server:latest  # Tags the image
+        docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.your-region.amazonaws.com/aaryan-dev-server:latest  # Pushes the image to ECR
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_REGION: your-region
+
+    - name: Deploy to ECS
+      run: |
+        aws ecs update-service --cluster aaryan-dev-cluster --service game-service-2 --force-new-deployment  # Forces ECS to deploy the new image
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_REGION: your-region
