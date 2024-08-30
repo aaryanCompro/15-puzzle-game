@@ -38,6 +38,12 @@ jobs:
     - name: Log in to Amazon ECR
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v2  # Logs into Amazon ECR
+      with:
+        registry-type: private
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_REGION: ap-south-1  # Set the correct region
 
     - name: Build and Push Docker image
       run: |
@@ -47,7 +53,7 @@ jobs:
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        AWS_REGION: ap-south-1  # Replace with your AWS region
+        AWS_REGION: ap-south-1  # Set the correct region
 
     - name: Deploy to ECS
       run: |
@@ -55,4 +61,4 @@ jobs:
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        AWS_REGION: ap-south-1  # Replace with your AWS region
+        AWS_REGION: ap-south-1  # Set the correct region
