@@ -50,7 +50,7 @@ jobs:
 
     - name: Build and Push Docker image
       run: |
-        docker buildx build --platform linux/arm64 -t aaryan-dev-server:latest .
+        docker buildx build --platform linux/arm64 -t aaryan-dev-server:latest -f Server/Dockerfile Server/  # Builds the Docker image from the Dockerfile in the 'Server' folder
         docker tag aaryan-dev-server:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.your-region.amazonaws.com/aaryan-dev-server:latest
         docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.your-region.amazonaws.com/aaryan-dev-server:latest
       env:
