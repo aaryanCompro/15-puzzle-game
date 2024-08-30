@@ -37,7 +37,7 @@ export default {
   },
 
   mounted() {
-    const apiUrl = process.env.VUE_APP_API_URL || "http://localhost:8000"; // Using environment variable for API URL
+    const apiUrl = process.env.VUE_APP_API_URL || "http://ishu-lb3-1634562430.ap-south-1.elb.amazonaws.com"; // Using environment variable for API URL
     axios
       .get(`${apiUrl}/api/data`)
       .then((response) => {
